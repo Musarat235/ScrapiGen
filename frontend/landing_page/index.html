@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScrapiGen - Web Scraping Without Code</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out forwards;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-300 { animation-delay: 0.3s; opacity: 0; }
+        .delay-400 { animation-delay: 0.4s; opacity: 0; }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(6, 182, 212, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100">
+    
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span class="text-2xl font-bold gradient-text">ScrapiGen</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-slate-300 hover:text-cyan-400 transition">Features</a>
+                    <a href="#how-it-works" class="text-slate-300 hover:text-cyan-400 transition">How It Works</a>
+                    <a href="#pricing" class="text-slate-300 hover:text-cyan-400 transition">Pricing</a>
+                    <a href="https://app.scrapigen.app" class="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 transition font-semibold">
+                        Try Free Beta
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 px-4 overflow-hidden">
+        <!-- Background gradient -->
+        <div class="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-slate-950 to-blue-900/20"></div>
+        
+        <!-- Animated circles -->
+        <div class="absolute top-20 left-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float" style="animation-delay: 1s;"></div>
+        
+        <div class="relative max-w-7xl mx-auto text-center">
+            <div class="animate-fade-in-up">
+                <div class="inline-block px-4 py-2 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-cyan-400 text-sm font-semibold mb-6">
+                    🚀 Now in Beta - Free Access
+                </div>
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up delay-100">
+                Web Scraping
+                <span class="gradient-text block mt-2">Without Code</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-slate-400 mb-12 max-w-3xl mx-auto animate-fade-in-up delay-200">
+                Extract data from any website using plain English. No CSS selectors. No programming. Just describe what you want.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up delay-300">
+                <a href="https://app.scrapigen.app" class="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 transition font-semibold text-lg glow-effect">
+                    Start Scraping Now
+                </a>
+                <a href="#how-it-works" class="px-8 py-4 bg-slate-800/50 border border-slate-700 rounded-lg hover:bg-slate-800 transition font-semibold text-lg">
+                    See How It Works
+                </a>
+            </div>
+            
+            <div class="mt-16 animate-fade-in-up delay-400">
+                <div class="glass-effect rounded-2xl p-2 max-w-4xl mx-auto glow-effect">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop" alt="Dashboard Preview" class="rounded-xl w-full">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-4xl font-bold gradient-text">87%</div>
+                    <div class="text-slate-400 mt-2">Success Rate</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold gradient-text">10sec</div>
+                    <div class="text-slate-400 mt-2">Average Time</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold gradient-text">100+</div>
+                    <div class="text-slate-400 mt-2">Sites Supported</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold gradient-text">Free</div>
+                    <div class="text-slate-400 mt-2">Beta Access</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Powerful Features,
+                    <span class="gradient-text">Simple Interface</span>
+                </h2>
+                <p class="text-xl text-slate-400">Everything you need to extract web data effortlessly</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-effect rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Plain English Prompts</h3>
+                    <p class="text-slate-400">Simply describe what you want: "extract product names and prices" - no technical knowledge required.</p>
+                </div>
+                
+                <div class="glass-effect rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Lightning Fast</h3>
+                    <p class="text-slate-400">Get your data in seconds, not hours. AI-powered extraction that's 10x faster than manual scraping.</p>
+                </div>
+                
+                <div class="glass-effect rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Multiple Formats</h3>
+                    <p class="text-slate-400">Export data as CSV, Excel, or JSON. Perfect for spreadsheets, databases, or API integrations.</p>
+                </div>
+                
+                <div class="glass-effect rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Batch Processing</h3>
+                    <p class="text-slate-400">Scrape multiple URLs at once. Process 10 pages in a single request - perfect for competitor analysis.</p>
+                </div>
+                
+                <div class="glass-effect rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Smart Extraction</h3>
+                    <p class="text-slate-400">AI automatically detects page structure and extracts the right data - meta tags, products, articles, and more.</p>
+                </div>
+                
+                <div class="glass-effect rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Real-Time Progress</h3>
+                    <p class="text-slate-400">Watch your scraping job in real-time with progress updates and status notifications.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-20 px-4 bg-gradient-to-b from-transparent to-slate-900/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    How It Works
+                </h2>
+                <p class="text-xl text-slate-400">Three simple steps to extract any data</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-12 relative">
+                <!-- Connection lines -->
+                <div class="hidden md:block absolute top-1/4 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-500"></div>
+                
+                <div class="relative text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6 glow-effect">
+                        1
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Paste URLs</h3>
+                    <p class="text-slate-400">Add the website URLs you want to scrape. One or multiple - up to 10 at once.</p>
+                </div>
+                
+                <div class="relative text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6 glow-effect">
+                        2
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Describe What You Want</h3>
+                    <p class="text-slate-400">Write in plain English: "get product prices" or "extract article headings"</p>
+                </div>
+                
+                <div class="relative text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6 glow-effect">
+                        3
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Download Data</h3>
+                    <p class="text-slate-400">Get structured data as CSV, Excel, or JSON. Ready to use in seconds.</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="https://app.scrapigen.app" class="inline-block px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 transition font-semibold text-lg glow-effect">
+                    Try It Now - It's Free
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Simple, Transparent Pricing
+                </h2>
+                <p class="text-xl text-slate-400">Start free. Scale as you grow.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="glass-effect rounded-2xl p-8 border-2 border-slate-700">
+                    <h3 class="text-2xl font-bold mb-2">Beta (Free)</h3>
+                    <div class="text-4xl font-bold mb-6">
+                        <span class="gradient-text">$0</span>
+                        <span class="text-lg text-slate-400">/forever</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>10 URLs per request</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>All export formats (CSV, Excel, JSON)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Meta tag extraction</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Community support</span>
+                        </li>
+                    </ul>
+                    <a href="https://app.scrapigen.app" class="block w-full px-6 py-3 bg-slate-800 border border-slate-700 rounded-lg hover:bg-slate-700 transition text-center font-semibold">
+                        Start Free
+                    </a>
+                </div>
+                
+                <div class="glass-effect rounded-2xl p-8 border-2 border-cyan-500 relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-sm font-semibold">
+                        Coming Soon
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Pro</h3>
+                    <div class="text-4xl font-bold mb-6">
+                        <span class="gradient-text">$10</span>
+                        <span class="text-lg text-slate-400">/month</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>100 URLs per request</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>JavaScript-rendered sites</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Priority processing</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Priority email support</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>API access</span>
+                        </li>
+                    </ul>
+                    <button disabled class="block w-full px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg opacity-50 cursor-not-allowed text-center font-semibold">
+                        Coming Soon
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center glass-effect rounded-3xl p-12 glow-effect">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                Ready to Start Scraping?
+            </h2>
+            <p class="text-xl text-slate-400 mb-8">
+                Join beta users extracting data without writing a single line of code
+            </p>
+            <a href="https://app.scrapigen.app" class="inline-block px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 transition font-semibold text-lg glow-effect">
+                Try ScrapiGen Free
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span class="text-xl font-bold gradient-text">ScrapiGen</span>
+                </div>
+                <div class="text-slate-400 text-center md:text-left">
+                    © 2025 ScrapiGen. All rights reserved.
+                </div>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-slate-400 hover:text-cyan-400 transition">Privacy</a>
+                    <a href="#" class="text-slate-400 hover:text-cyan-400 transition">Terms</a>
+                    <a href="#" class="text-slate-400 hover:text-cyan-400 transition">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

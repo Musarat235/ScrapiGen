@@ -1,0 +1,7 @@
+﻿fastapi
+httpx
+beautifulsoup4
+playwright
+python-dotenv
+groq
+pydantic
