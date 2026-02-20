@@ -1,7 +1,6 @@
 from fastapi import BackgroundTasks, APIRouter
 from models.requests import BatchScrapeRequest
 from datetime import datetime
-from frontend.streamlit_app import app
 from core.processing.batch import BatchProcessor
 from storage.jobs_db import jobs_db
 from config.config import BATCH_CONFIG
