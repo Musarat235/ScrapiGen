@@ -5,3 +5,4 @@ playwright
 python-dotenv
 groq
 pydantic
+uvicorn[standard]
