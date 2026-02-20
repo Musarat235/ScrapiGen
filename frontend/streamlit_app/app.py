@@ -7,7 +7,7 @@ import json
 import os
 
 # Configuration
-API_URL = os.getenv("API_URL", "http://localhost:8000")  # Change to your deployed API URL
+API_URL = os.getenv("API_URL", "https://scrapigen.up.railway.app/")  # Change to your deployed API URL
 
 st.set_page_config(
     page_title="ScrapiGen",
