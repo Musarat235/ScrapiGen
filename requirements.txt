@@ -6,3 +6,4 @@ python-dotenv
 groq
 pydantic
 uvicorn[standard]
+tqdm
