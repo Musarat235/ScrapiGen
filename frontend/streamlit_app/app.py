@@ -51,6 +51,30 @@ st.markdown("""
         padding: 1rem 1.5rem;
         margin: 1rem 0;
     }
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+    .stage-msg {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        color: #ccc;
+        margin-top: 0.3rem;
+    }
+    .stage-msg .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #4fc3f7;
+        animation: pulse-dot 1.2s ease-in-out infinite;
+    }
+    .url-tracker {
+        font-size: 0.8rem;
+        color: #888;
+        margin-top: 0.2rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -209,8 +233,9 @@ if st.button("🚀 Start Scraping", type="primary", use_container_width=True):
                         
                         progress_bar = st.progress(0)
                         status_text = st.empty()
+                        stage_text = st.empty()
                         
-                        max_attempts = 60
+                        max_attempts = 120
                         attempt = 0
                         
                         while attempt < max_attempts:
@@ -225,6 +250,7 @@ if st.button("🚀 Start Scraping", type="primary", use_container_width=True):
                                 if job_status["status"] == "completed":
                                     progress_bar.progress(100)
                                     status_text.success("✅ Scraping completed!")
+                                    stage_text.empty()
                                     
                                     results = job_status.get("results", [])
                                     st.session_state.raw_results = results
@@ -249,13 +275,27 @@ if st.button("🚀 Start Scraping", type="primary", use_container_width=True):
                                 elif job_status["status"] == "failed":
                                     progress_bar.progress(100)
                                     status_text.error("❌ Scraping failed")
+                                    stage_text.empty()
                                     st.error(job_status.get("error", "Unknown error"))
                                     break
                                 
                                 else:
-                                    progress = min((attempt / max_attempts) * 100, 90)
-                                    progress_bar.progress(int(progress))
-                                    status_text.info(f"⏳ Processing... ({attempt}s)")
+                                    # --- Stage-aware progress ---
+                                    api_progress = job_status.get("progress", 0)
+                                    stage = job_status.get("stage", "⏳ Processing…")
+                                    urls_done = job_status.get("urls_completed", 0)
+                                    urls_total = job_status.get("urls_total", len(urls_list))
+                                    
+                                    progress_bar.progress(min(api_progress, 95))
+                                    status_text.info(stage)
+                                    
+                                    if urls_total > 0:
+                                        stage_text.markdown(
+                                            f'<div class="url-tracker">'
+                                            f'📄 URLs processed: {urls_done} / {urls_total}'
+                                            f'</div>',
+                                            unsafe_allow_html=True
+                                        )
                         
                         if attempt >= max_attempts:
                             st.warning("⏱️ Job is taking longer than expected. Check back later.")
