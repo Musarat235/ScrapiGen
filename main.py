@@ -21,6 +21,7 @@ from api.routes.batch import router as batch_router
 from api.routes.pagination import router as pagination_router
 from api.routes.crawling import router as crawling_router
 from api.routes.admin import router as admin_router
+from api.routes.enrichment import router as enrichment_router
 
 # Import cleanup functions
 from core.html_processing.renderer import cleanup_browser
@@ -72,6 +73,7 @@ app.include_router(batch_router, prefix="/batch", tags=["Batch Processing"])
 app.include_router(pagination_router, prefix="/pagination", tags=["Pagination"])
 app.include_router(crawling_router, prefix="/crawl", tags=["Crawling"])
 app.include_router(admin_router, tags=["Admin"])
+app.include_router(enrichment_router, prefix="/enrichment", tags=["Enrichment"])
 
 
 # Root endpoint

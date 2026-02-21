@@ -3,7 +3,6 @@ import requests
 import time
 import pandas as pd
 import json
-
 import os
 
 # Configuration
@@ -29,6 +28,29 @@ st.markdown("""
         color: #666;
         margin-bottom: 2rem;
     }
+    .stats-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 12px;
+        padding: 1.2rem;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .stats-card h3 {
+        margin: 0;
+        font-size: 2rem;
+    }
+    .stats-card p {
+        margin: 0.3rem 0 0 0;
+        color: #aaa;
+        font-size: 0.85rem;
+    }
+    .clean-banner {
+        background: linear-gradient(135deg, #0f3d0f 0%, #1a472a 100%);
+        border: 1px solid #2d6a2d;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin: 1rem 0;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -46,6 +68,7 @@ with st.sidebar:
     1. Paste URLs (max 10)
     2. Describe what you want
     3. Get structured data
+    4. Clean & enrich with one click
     
     **v1.0 Beta** - Free tier
     """)
@@ -56,6 +79,16 @@ with st.sidebar:
     st.code("Extract product name, price, and rating")
     st.code("Get all article titles and dates")
     st.code("Find contact email and phone number")
+
+# Initialize session state for enrichment flow
+if "raw_results" not in st.session_state:
+    st.session_state.raw_results = None
+if "enrichment_stats" not in st.session_state:
+    st.session_state.enrichment_stats = None
+if "cleaned_results" not in st.session_state:
+    st.session_state.cleaned_results = None
+if "scrape_done" not in st.session_state:
+    st.session_state.scrape_done = False
 
 # Main interface
 col1, col2 = st.columns([2, 1])
@@ -86,8 +119,66 @@ if urls_input:
     else:
         st.info(f"✅ {url_count} URL(s) ready to scrape")
 
-# Scrape button
+
+# ============================================================================
+# HELPER: Collect flat data records from scrape results for enrichment
+# ============================================================================
+def _collect_data_records(results):
+    """Extract all data dicts from the scrape results structure."""
+    records = []
+    for r in results:
+        if not r.get("success"):
+            continue
+        data = r.get("data", [])
+        if isinstance(data, list):
+            for item in data:
+                if isinstance(item, dict):
+                    records.append(item)
+        elif isinstance(data, dict):
+            records.append(data)
+    return records
+
+
+# ============================================================================
+# HELPER: Display results (used for both raw and cleaned)
+# ============================================================================
+def _display_results(results, label_prefix=""):
+    """Show results as expanders with JSON + DataFrame + download."""
+    for idx, result in enumerate(results):
+        with st.expander(f"🔗 {result.get('url', f'Record {idx+1}')}", expanded=(idx == 0)):
+            if result.get("success"):
+                data = result.get("data", {})
+                st.json(data)
+                
+                items = data if isinstance(data, list) else data.get("data", data) if isinstance(data, dict) else []
+                if isinstance(items, list) and items:
+                    try:
+                        df = pd.DataFrame(items)
+                        st.dataframe(df, use_container_width=True)
+                        csv = df.to_csv(index=False)
+                        st.download_button(
+                            f"📥 Download CSV",
+                            csv,
+                            f"ScrapiGen_{label_prefix}{idx}.csv",
+                            "text/csv",
+                            key=f"dl_{label_prefix}{idx}"
+                        )
+                    except Exception:
+                        pass
+            else:
+                st.error(f"Error: {result.get('error')}")
+
+
+# ============================================================================
+# SCRAPE BUTTON
+# ============================================================================
 if st.button("🚀 Start Scraping", type="primary", use_container_width=True):
+    # Reset enrichment state for new scrape
+    st.session_state.raw_results = None
+    st.session_state.enrichment_stats = None
+    st.session_state.cleaned_results = None
+    st.session_state.scrape_done = False
+    
     if not urls_input:
         st.error("Please enter at least one URL")
     elif not prompt:
@@ -100,7 +191,6 @@ if st.button("🚀 Start Scraping", type="primary", use_container_width=True):
         else:
             with st.spinner("🔄 Creating scraping job..."):
                 try:
-                    # Create job
                     response = requests.post(
                         f"{API_URL}/scrape",
                         json={
@@ -117,19 +207,16 @@ if st.button("🚀 Start Scraping", type="primary", use_container_width=True):
                         
                         st.success(f"✅ Job created: {job_id}")
                         
-                        # Progress bar
                         progress_bar = st.progress(0)
                         status_text = st.empty()
                         
-                        # Poll for results
-                        max_attempts = 60  # 60 seconds max
+                        max_attempts = 60
                         attempt = 0
                         
                         while attempt < max_attempts:
                             time.sleep(1)
                             attempt += 1
                             
-                            # Check status
                             status_response = requests.get(f"{API_URL}/job/{job_id}")
                             
                             if status_response.status_code == 200:
@@ -139,57 +226,23 @@ if st.button("🚀 Start Scraping", type="primary", use_container_width=True):
                                     progress_bar.progress(100)
                                     status_text.success("✅ Scraping completed!")
                                     
-                                    # Display results
-                                    st.subheader("📊 Results")
-                                    
                                     results = job_status.get("results", [])
+                                    st.session_state.raw_results = results
+                                    st.session_state.scrape_done = True
                                     
-                                    # Success/Fail summary
-                                    success_count = sum(1 for r in results if r.get("success"))
-                                    fail_count = len(results) - success_count
-                                    
-                                    col1, col2 = st.columns(2)
-                                    col1.metric("✅ Successful", success_count)
-                                    col2.metric("❌ Failed", fail_count)
-                                    
-                                    # Show each result
-                                    for idx, result in enumerate(results):
-                                        with st.expander(f"🔗 {result['url']}", expanded=(idx==0)):
-                                            if result.get("success"):
-                                                data = result.get("data", {})
-                                                
-                                                # Display as JSON
-                                                st.json(data)
-                                                
-                                                # Try to convert to DataFrame
-                                                if "data" in data and isinstance(data["data"], list):
-                                                    try:
-                                                        df = pd.DataFrame(data["data"])
-                                                        st.dataframe(df, use_container_width=True)
-                                                        
-                                                        # Download button
-                                                        csv = df.to_csv(index=False)
-                                                        st.download_button(
-                                                            "📥 Download CSV",
-                                                            csv,
-                                                            f"ScrapiGen_{idx}.csv",
-                                                            "text/csv"
-                                                        )
-                                                    except:
-                                                        pass
-                                            else:
-                                                st.error(f"Error: {result.get('error')}")
-                                    
-                                    # Download all results as JSON
-                                    st.divider()
-                                    all_results_json = json.dumps(results, indent=2)
-                                    st.download_button(
-                                        "📥 Download All Results (JSON)",
-                                        all_results_json,
-                                        "ScrapiGen_results.json",
-                                        "application/json",
-                                        use_container_width=True
-                                    )
+                                    # --- Analyze for stats ---
+                                    data_records = _collect_data_records(results)
+                                    if data_records:
+                                        try:
+                                            analyze_resp = requests.post(
+                                                f"{API_URL}/enrichment/analyze",
+                                                json={"data": data_records},
+                                                timeout=15
+                                            )
+                                            if analyze_resp.status_code == 200:
+                                                st.session_state.enrichment_stats = analyze_resp.json()
+                                        except Exception:
+                                            pass  # stats are nice-to-have
                                     
                                     break
                                 
@@ -200,7 +253,6 @@ if st.button("🚀 Start Scraping", type="primary", use_container_width=True):
                                     break
                                 
                                 else:
-                                    # Still processing
                                     progress = min((attempt / max_attempts) * 100, 90)
                                     progress_bar.progress(int(progress))
                                     status_text.info(f"⏳ Processing... ({attempt}s)")
@@ -217,6 +269,164 @@ if st.button("🚀 Start Scraping", type="primary", use_container_width=True):
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
 
+
+# ============================================================================
+# DISPLAY RESULTS + ENRICHMENT FLOW
+# ============================================================================
+if st.session_state.scrape_done and st.session_state.raw_results:
+    results = st.session_state.raw_results
+    
+    st.subheader("📊 Raw Scraped Data")
+    
+    # Success/Fail summary
+    success_count = sum(1 for r in results if r.get("success"))
+    fail_count = len(results) - success_count
+    
+    col1, col2 = st.columns(2)
+    col1.metric("✅ Successful", success_count)
+    col2.metric("❌ Failed", fail_count)
+    
+    # Show raw results
+    _display_results(results, label_prefix="raw_")
+    
+    # ================================================================
+    # ENRICHMENT STATS BLOCK
+    # ================================================================
+    stats = st.session_state.enrichment_stats
+    if stats and stats.get("total_issues", 0) > 0:
+        st.divider()
+        st.subheader("🔍 Data Quality Report")
+        
+        c1, c2, c3, c4 = st.columns(4)
+        
+        with c1:
+            st.markdown(f"""
+            <div class="stats-card">
+                <h3>🔄 {stats.get('duplicates_found', 0)}</h3>
+                <p>Duplicates Found</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with c2:
+            st.markdown(f"""
+            <div class="stats-card">
+                <h3>📱 {stats.get('phones_to_fix', 0)}</h3>
+                <p>Phones to Format</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with c3:
+            st.markdown(f"""
+            <div class="stats-card">
+                <h3>📧 {stats.get('emails_to_fix', 0)}</h3>
+                <p>Emails to Fix</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with c4:
+            st.markdown(f"""
+            <div class="stats-card">
+                <h3>🌐 {stats.get('urls_to_fix', 0)}</h3>
+                <p>URLs to Fix</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.write("")
+        
+        # CLEAN DATA BUTTON
+        if st.session_state.cleaned_results is None:
+            if st.button("🧹 Clean Data", type="primary", use_container_width=True, key="clean_btn"):
+                with st.spinner("🧹 Cleaning and enriching data..."):
+                    data_records = _collect_data_records(results)
+                    try:
+                        clean_resp = requests.post(
+                            f"{API_URL}/enrichment/clean",
+                            json={
+                                "data": data_records,
+                                "stages": ["normalize", "deduplicate"]
+                            },
+                            timeout=30
+                        )
+                        if clean_resp.status_code == 200:
+                            st.session_state.cleaned_results = clean_resp.json()
+                            st.rerun()
+                        else:
+                            st.error("Failed to clean data. Please try again.")
+                    except Exception as e:
+                        st.error(f"Enrichment error: {str(e)}")
+    
+    elif stats and stats.get("total_issues", 0) == 0:
+        st.divider()
+        st.success("✨ Data looks clean! No duplicates or formatting issues detected.")
+    
+    # ================================================================
+    # SHOW CLEANED DATA (after user clicked Clean Data)
+    # ================================================================
+    if st.session_state.cleaned_results is not None:
+        cleaned = st.session_state.cleaned_results
+        
+        st.divider()
+        st.markdown('<div class="clean-banner">', unsafe_allow_html=True)
+        st.subheader("✨ Cleaned & Enriched Data")
+        
+        # Before → After metrics
+        bc1, bc2, bc3 = st.columns(3)
+        bc1.metric("Original Records", cleaned.get("original_count", 0))
+        bc2.metric("After Cleaning", cleaned.get("enriched_count", 0))
+        bc3.metric(
+            "Duplicates Removed",
+            cleaned.get("duplicates_removed", 0)
+        )
+        
+        stages = cleaned.get("stages_applied", [])
+        st.success(f"✅ Applied: {', '.join(s.title() for s in stages)}")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Show cleaned data as a DataFrame
+        cleaned_data = cleaned.get("data", [])
+        if cleaned_data:
+            try:
+                df = pd.DataFrame(cleaned_data)
+                st.dataframe(df, use_container_width=True)
+                
+                # Download cleaned CSV
+                csv = df.to_csv(index=False)
+                st.download_button(
+                    "📥 Download Cleaned CSV",
+                    csv,
+                    "ScrapiGen_cleaned.csv",
+                    "text/csv",
+                    use_container_width=True,
+                    key="dl_cleaned_csv"
+                )
+            except Exception:
+                st.json(cleaned_data)
+        
+        # Download cleaned JSON
+        cleaned_json = json.dumps(cleaned_data, indent=2)
+        st.download_button(
+            "📥 Download Cleaned JSON",
+            cleaned_json,
+            "ScrapiGen_cleaned.json",
+            "application/json",
+            use_container_width=True,
+            key="dl_cleaned_json"
+        )
+    
+    # ================================================================
+    # DOWNLOAD RAW (always available)
+    # ================================================================
+    st.divider()
+    all_results_json = json.dumps(results, indent=2)
+    st.download_button(
+        "📥 Download Raw Results (JSON)",
+        all_results_json,
+        "ScrapiGen_raw_results.json",
+        "application/json",
+        use_container_width=True,
+        key="dl_raw_json"
+    )
+
 # Footer
 st.divider()
 st.markdown("""
@@ -224,4 +434,3 @@ st.markdown("""
     Made with ❤️ | ScrapiGen v1.0 Beta | Free Tier: 10 URLs per job
 </div>
 """, unsafe_allow_html=True)
-
